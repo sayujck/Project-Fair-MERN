@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import authImg from '../assets/authImg.png'
 import { FloatingLabel, Form, Spinner } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import { loginAPI, registerAPI } from '../services/allAPI'
+import { tokenContext } from '../contexts/TokenAuth'
 
 const Auth = ({insideRegister}) => {
+    const {authorisedUser,setAuthorisedUser} = useContext(tokenContext)
     const [isLogin,setIsLogin] = useState(false)
     const navigate = useNavigate()
     const [userInput,setUserInput] = useState({
@@ -20,6 +22,7 @@ const Auth = ({insideRegister}) => {
           if(result.status==200){
             alert(`Welcome ${result.data?.username}, Please login to explore our projects`)
             navigate("/login")
+            setAuthorisedUser(true)
             setUserInput({username:"",email:"",password:""})
           }
           else{
@@ -38,7 +41,7 @@ const Auth = ({insideRegister}) => {
     }
   }
     
- const login = async(e)=>{
+   const login = async(e)=>{
     e.preventDefault()
     if(userInput.email && userInput.password){
       try {

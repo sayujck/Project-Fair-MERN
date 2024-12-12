@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import Add from './Add'
 import Edit from './Edit'
 import { userProjectsAPI } from '../services/allAPI/'
-import { addProjectContext } from '../contexts/ContextShare'
+import { addProjectContext, editProjectContext } from '../contexts/ContextShare'
+import { deleteProjectAPI } from '../services/allAPI'
 
 const View = () => {
+  const {editProjectResponse,setEditProjectResponse} = useContext(editProjectContext)
   const {addProjectResponse,setAddProjectResponse} = useContext(addProjectContext)
   const [userProjects,setUserProjects] = useState([])
 
@@ -12,7 +14,7 @@ const View = () => {
 
   useEffect(()=>{
     getUserProjects()
-  },[addProjectResponse])
+  },[addProjectResponse,editProjectResponse])
 
   const getUserProjects = async()=>{
     const token = sessionStorage.getItem("token")
@@ -32,6 +34,23 @@ const View = () => {
     }
   }
 
+  const removeProject = async(id)=>{
+    const token = sessionStorage.getItem("token")
+    if(token){
+      const reqHeader = {
+        "Authorization": `Bearer ${token}`
+      }
+      try {
+        const result = await deleteProjectAPI(id,reqHeader)
+        if(result.status==200){
+          getUserProjects()
+        }
+  
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
 
   return (
     <>
@@ -50,7 +69,7 @@ const View = () => {
             <div className='d-flex align-items-center'>
              <div> <Edit project={project}/> </div>
              <button className='btn'><a href={project?.github} target='_blank'> <i className='fa-brands fa-github'></i> </a></button>
-             <button className="btn"><i className='fa-solid fa-trash text-danger'></i></button>
+             <button onClick={()=>removeProject(project?._id)} className="btn"><i className='fa-solid fa-trash text-danger'></i></button>
            </div>
            </div>
         ))

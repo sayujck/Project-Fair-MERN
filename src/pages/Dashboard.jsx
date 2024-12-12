@@ -8,8 +8,8 @@ const Dashboard = () => {
   const [username,setUsername] = useState("")
 
   useEffect(()=>{
-    if(sessionStorage.getItem("user")){      
-      setUsername(JSON.parse(sessionStorage.getItem("user")).username.split(" ")[0])
+    if(sessionStorage.getItem("user")){ 
+      setUsername(JSON.parse(sessionStorage.getItem("user")).username?.split(" ")[0])
     }
   },[])
   return (
